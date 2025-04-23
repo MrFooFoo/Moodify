@@ -15,10 +15,12 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
 
 var kafkaServer = builder.Configuration.GetValue<string>("Kafka:BootstrapServers") ?? "localhost:9092";
 builder.Services.AddSingleton(new KafkaProducer(kafkaServer));
 builder.Services.AddSingleton<MoodService>();
+builder.Services.AddScoped<FaceService>();
 
 var app = builder.Build();
 app.UseCors("AllowSpecificOrigin");

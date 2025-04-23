@@ -14,9 +14,11 @@ export const submitMood = async (userId, mood) => {
 };
 
 
-export const uploadSelfie = async (file) => {
+export const uploadSelfie = async (file, userId) => {
   const formData = new FormData();
   formData.append("selfie", file);
+  formData.append("userId", userId); // include userId
+
   try {
     const response = await axios.post("http://localhost:5011/api/Mood/uploadSelfie", formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -27,6 +29,7 @@ export const uploadSelfie = async (file) => {
     throw error;
   }
 };
+
 
 export const getPlaylist = async (userId) => {
   try {

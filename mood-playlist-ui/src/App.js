@@ -33,18 +33,17 @@ export default function App() {
     const file = event.target.files[0];
     setSelfie(file);
     try {
-      // Call the API to upload the selfie for mood detection
-      await uploadSelfie(file);
-      
-      // Once the mood is detected, fetch the playlist
-      const detectedMood = "Happy";  // Placeholder: Here you would get the mood from the API
+      const result = await uploadSelfie(file, userId); // pass userId
+      const detectedMood = result.mood; // extract mood from response
+  
       setSelectedMood(detectedMood);
-      const fetchedPlaylist = await getPlaylist(userId); // Assuming userId is passed
-      setPlaylist(fetchedPlaylist);  // Store the playlist in state
+      const fetchedPlaylist = await getPlaylist(userId);
+      setPlaylist(fetchedPlaylist);
     } catch (error) {
       console.error("Error uploading selfie:", error);
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center gap-6 p-4">
@@ -88,22 +87,49 @@ export default function App() {
         </p>
       )}
 
-      {/* Playlist Display */}
-      {playlist.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold">Recommended Playlist</h3>
-          <ul className="list-disc pl-6">
-            {playlist.map((item, index) => (
-              <li key={index}>
-                <strong>{item.title}</strong> by {item.artist} - 
-                <a className="text-blue-500" href={item.url} target="_blank" rel="noopener noreferrer">
-                  Listen
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+{playlist.length > 0 && (
+  <div className="mt-6 w-full max-w-5xl">
+    <h3 className="text-2xl font-semibold mb-4 text-center text-gray-800">🎧 Recommended Playlist</h3>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      {playlist.map((item, index) => {
+        let videoId = "";
+        try {
+          const url = new URL(item.url);
+          if (url.hostname.includes("youtu.be")) {
+            videoId = url.pathname.slice(1);
+          } else {
+            videoId = url.searchParams.get("v") || "";
+          }
+        } catch (e) {
+          videoId = "";
+        }
+
+        const thumbnailUrl = videoId
+          ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+          : "https://via.placeholder.com/320x180?text=No+Thumbnail";
+
+        return (
+          <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all">
+            <img src={thumbnailUrl} alt={item.title} className="w-full h-48 object-cover" />
+            <div className="p-4">
+              <h4 className="font-bold text-lg text-gray-800">{item.title}</h4>
+              <p className="text-gray-600 text-sm mb-2">by {item.artist}</p>
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-600 text-sm font-medium hover:underline"
+              >
+                ▶️ Watch on YouTube
+              </a>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
