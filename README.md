@@ -15,6 +15,12 @@ Moodify is a web application that allows users to select their mood or upload a 
 - **Messaging**: Kafka (for communication between services)
 - **Containerization**: Docker & Kubernetes (for deployment)
 
+## Sample Screenshots
+![image](https://github.com/user-attachments/assets/6b6d0242-275e-47ea-b046-69124c7e86a0)
+![image](https://github.com/user-attachments/assets/5cada04f-773d-4ffc-9324-41dcb5da0e3f)
+
+
+
 ## Getting Started
 
 To run the project locally, follow these steps:
